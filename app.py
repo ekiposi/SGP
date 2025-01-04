@@ -11,7 +11,13 @@ import json
 import base64
 from io import BytesIO
 from PIL import Image
-import face_recognition
+# Make face recognition optional
+try:
+    import face_recognition
+    FACE_RECOGNITION_ENABLED = True
+except ImportError:
+    FACE_RECOGNITION_ENABLED = False
+    print("Face recognition is not available")
 import shutil
 import sqlite3
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -436,8 +442,14 @@ def scan():
 
 @app.route('/facial-recognition', methods=['POST'])
 def facial_recognition():
-    if not os.path.exists('static/uploads/face_snapshots'):
-        os.makedirs('static/uploads/face_snapshots', exist_ok=True)
+    if not FACE_RECOGNITION_ENABLED:
+        flash('La reconnaissance faciale n\'est pas disponible.', 'error')
+        return redirect(url_for('scan'))
+
+    if 'file' not in request.files:
+        flash('Aucune image n\'a été téléchargée.', 'error')
+        return redirect(url_for('scan'))
+    
     data = request.json
     image_data = data.get('image_data')
     emp_id = data.get('emp_id')
@@ -916,4 +928,6 @@ def change_password():
 
 if __name__ == '__main__':
     app.run(debug=True, port=os.getenv("PORT", default=5000))
-
+else:
+    # This is the entry point Gunicorn will use
+    application = app
