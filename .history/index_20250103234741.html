@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting to SGP System</title>
+    <style>
+       
+       <style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+    </style>
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #1a1a1a;
+            font-family: "Raleway", serif;
+  font-optical-sizing: auto;
+            color: #fff;
+        }
+        .container {
+            text-align: center;
+        }
+        .loader {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+            border: 4px solid #333;
+            border-top: 4px solid #03e9f4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .message {
+            font-size: 24px;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+        .destination {
+            color: #03e9f4;
+            font-family: "Raleway", serif;
+            font-size: 20px;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards 0.5s;
+        }
+        .info {
+            font-size: 16px;
+            color: #888;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards 1s;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .binary {
+            position: fixed;
+            color: #222;
+            font-family: "Raleway", serif;
+            font-size: 14px;
+            pointer-events: none;
+            user-select: none;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loader"></div>
+        <div class="message">Establishing Secure Connection</div>
+        <div class="destination">167.88.39.229:5000</div>
+        <div class="info">You are being redirected to a secure server environment. Please wait while we establish a connection...</div>
+    </div>
+
+    <script>
+        // Create binary background effect
+        function createBinary() {
+            const binary = document.createElement('div');
+            binary.className = 'binary';
+            binary.style.left = Math.random() * window.innerWidth + 'px';
+            binary.style.top = Math.random() * window.innerHeight + 'px';
+            binary.textContent = Math.random() > 0.5 ? '0' : '1';
+            document.body.appendChild(binary);
+            
+            setTimeout(() => {
+                binary.remove();
+            }, 2000);
+        }
+
+        // Generate binary effects
+        setInterval(createBinary, 100);
+
+        // Redirect after animation
+        setTimeout(() => {
+            window.location.href = "http://167.88.39.229:5000";
+        }, 3000);
+    </script>
+</body>
+</html>
