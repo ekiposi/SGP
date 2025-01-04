@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Set environment variables
-ENV FLASK_APP=app.py
+ENV FLASK_APP=main.py
 ENV FLASK_ENV=production
 ENV PYTHONPATH=/app
 ENV PORT=8080
@@ -47,4 +47,4 @@ RUN python init_db.py || true
 EXPOSE 8080
 
 # Command to run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "4", "--timeout", "120", "app:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "4", "--timeout", "120", "main:application"]

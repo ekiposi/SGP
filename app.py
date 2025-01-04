@@ -24,9 +24,12 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0667akk7'  # Change this to a secure secret key
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///attendance.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/attendance.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join(app.static_folder)
+
+# Initialize Flask extensions
+db.init_app(app)
 
 # Create backup directory if it doesn't exist
 BACKUP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'backup')
@@ -38,7 +41,6 @@ scheduler = BackgroundScheduler()
 scheduler.start()
 
 # Initialize database
-db.init_app(app)
 with app.app_context():
     db.create_all()
 
