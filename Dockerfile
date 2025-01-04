@@ -19,7 +19,7 @@ WORKDIR /app
 
 # Set environment variables
 ENV FLASK_APP=main.py
-ENV FLASK_ENV=production
+ENV FLASK_DEBUG=0
 ENV PYTHONPATH=/app
 ENV PORT=8080
 
@@ -56,4 +56,4 @@ RUN python init_db.py
 EXPOSE 8080
 
 # Command to run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "4", "--timeout", "120", "main:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "4", "--timeout", "120", "main:app"]

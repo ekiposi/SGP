@@ -1,4 +1,8 @@
-from app import app as application
+from app import app
+
+# This is what Gunicorn will import
+application = app
+app = application  # This ensures both 'app' and 'application' are available
 
 if __name__ == '__main__':
-    application.run()
+    app.run(host='0.0.0.0', port=8080)
