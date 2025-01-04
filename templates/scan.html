@@ -6,10 +6,16 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Scan du code QR</h2>
+                    <h2 class="card-title text-center mb-4">QR Code Scanner</h2>
                     
                     <!-- Scanner container -->
                     <div id="reader" style="width: 100%; min-height: 400px;"></div>
+                    
+                    <!-- Face recognition container -->
+                    <div id="faceContainer" style="display: none;">
+                        <video id="video" width="640" height="480" autoplay></video>
+                        <canvas id="overlay" style="position: absolute; top: 0; left: 0;"></canvas>
+                    </div>
                     
                     <!-- Status messages -->
                     <div id="scanResult" class="alert mt-3" style="display: none;"></div>
@@ -19,80 +25,123 @@
     </div>
 </div>
 
-<!-- Include HTML5-QRCode library -->
+<!-- Include required libraries -->
 <script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+// Load face-api.js models
+async function loadModels() {
+    try {
+        await faceapi.nets.tinyFaceDetector.loadFromUri('/static/models');
+        await faceapi.nets.faceLandmark68Net.loadFromUri('/static/models');
+        await faceapi.nets.faceRecognitionNet.loadFromUri('/static/models');
+        console.log('Face models loaded successfully');
+        return true;
+    } catch (error) {
+        console.error('Error loading face models:', error);
+        return false;
+    }
+}
+
+// Initialize face recognition
+async function initFaceRecognition() {
+    const video = document.getElementById('video');
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+    
+    video.addEventListener('play', () => {
+        const canvas = document.getElementById('overlay');
+        canvas.width = video.width;
+        canvas.height = video.height;
+        
+        setInterval(async () => {
+            const detections = await faceapi.detectAllFaces(video, 
+                new faceapi.TinyFaceDetectorOptions()
+            ).withFaceLandmarks();
+            
+            const context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (detections.length > 0) {
+                faceapi.draw.drawDetections(canvas, detections);
+                faceapi.draw.drawFaceLandmarks(canvas, detections);
+            }
+        }, 100);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
     const html5QrcodeScanner = new Html5Qrcode("reader");
     const scanResult = document.getElementById('scanResult');
+    const faceContainer = document.getElementById('faceContainer');
+    
+    // Load face models
+    await loadModels();
     
     function onScanSuccess(decodedText, decodedResult) {
         // Stop scanning
-        html5QrcodeScanner.stop().then(() => {
+        html5QrcodeScanner.stop().then(async () => {
             console.log('Scanner stopped.');
             
             // Send the QR code data to the server
-            fetch('/scan', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    qr_data: decodedText
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Show success message
+            try {
+                const response = await fetch('/scan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        qr_data: decodedText
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Show result
                 scanResult.style.display = 'block';
                 if (data.status === 'success') {
                     scanResult.className = 'alert alert-success mt-3';
                     scanResult.textContent = data.message;
                     
-                    // Reload scanner after 3 seconds
-                    setTimeout(() => {
-                        startScanner();
-                        scanResult.style.display = 'none';
-                    }, 3000);
+                    // If face recognition is enabled, start it
+                    if (data.faceEnabled) {
+                        document.getElementById('reader').style.display = 'none';
+                        faceContainer.style.display = 'block';
+                        await initFaceRecognition();
+                    }
                 } else {
                     scanResult.className = 'alert alert-danger mt-3';
                     scanResult.textContent = data.message;
-                    
-                    // Reload scanner after 2 seconds on error
+                    // Restart scanner after 3 seconds on error
                     setTimeout(() => {
                         startScanner();
-                        scanResult.style.display = 'none';
-                    }, 2000);
+                    }, 3000);
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error:', error);
                 scanResult.style.display = 'block';
                 scanResult.className = 'alert alert-danger mt-3';
-                scanResult.textContent = 'Erreur lors du scan. Veuillez réafficher le code QR.';
-                
-                // Reload scanner after error
+                scanResult.textContent = 'An error occurred. Please try again.';
                 setTimeout(() => {
                     startScanner();
-                    scanResult.style.display = 'none';
-                }, 2000);
-            });
+                }, 3000);
+            }
         });
     }
 
     function onScanError(errorMessage) {
-        // Handle scan error
-        console.error(errorMessage);
+        console.warn(`QR code parse error, error = ${errorMessage}`);
     }
 
     function startScanner() {
+        scanResult.style.display = 'none';
+        faceContainer.style.display = 'none';
+        document.getElementById('reader').style.display = 'block';
+        
         html5QrcodeScanner.start(
-            { facingMode: "environment" }, // Use back camera if available
-            {
-                fps: 10,
-                qrbox: { width: 250, height: 250 }
-            },
+            { facingMode: "environment" },
+            { fps: 10, qrbox: 250 },
             onScanSuccess,
             onScanError
         );

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Système de Gestion de Présences</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système de Gestion de Présences</title>
     
     <!-- Fonts and Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap">
@@ -88,124 +88,88 @@
 </style>
 <body>
     <!-- Navigation -->
-    <nav class="navbar shadow-sm bg-white border-b border-gray-100 py-4">
-        <div class="container px-4 mx-auto">
-            <div class="flex items-center justify-between">
-                <a href="{{ url_for('index') }}" class="navbar-brand text-xl font-semibold text-gray-800 hover:text-blue-600 transition duration-150">
-                    <i class="fas fa-clock text-blue-500 me-2"></i>Système de Gestion <br /> de Présence
-                </a>
-                
-                <!-- Mobile menu button -->
-                <button class="lg:hidden rounded-lg focus:outline-none focus:shadow-outline" id="menu-toggle" aria-controls="mobile-menu" aria-expanded="false">
-                    <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
-                        <path id="menu-icon" fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                    </svg>
-                </button>
-
-                <!-- Desktop Navigation -->
-                <div class="navbar-links hidden lg:flex items-center space-x-4" id="menu">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Système de Gestion de Présence</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
                     {% if current_user.is_authenticated %}
                         {% if current_user.is_admin %}
-                            <div class="flex items-center space-x-6">
-                                <a href="{{ url_for('dashboard') }}" class="nav-link px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-150 flex items-center {% if request.endpoint == 'dashboard' %}bg-blue-50 text-blue-600 font-medium{% endif %}">
-                                    <i class="fas fa-chart-line me-2"></i> Tableau de bord
-                                </a>
-                                <a href="{{ url_for('employees') }}" class="nav-link px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-150 flex items-center {% if request.endpoint == 'employees' %}bg-blue-50 text-blue-600 font-medium{% endif %}">
-                                    <i class="fas fa-users me-2"></i> Employés
-                                </a>
-                                <a href="{{ url_for('general') }}" class="nav-link px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-150 flex items-center {% if request.endpoint == 'general' %}bg-blue-50 text-blue-600 font-medium{% endif %}">
-                                    <i class="fas fa-qrcode me-2"></i> Centre de Contrôle
-                                </a>
-                                <a href="{{ url_for('report') }}" class="nav-link px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-150 flex items-center {% if request.endpoint == 'report' %}bg-blue-50 text-blue-600 font-medium{% endif %}">
-                                    <i class="fas fa-chart-bar me-2"></i> Rapports
-                                </a>
-                                <div class="border-l border-gray-200 h-6 mx-2"></div>
-                                <div class="relative group">
-                                    <button class="flex items-center px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-150">
-                                        <i class="fas fa-cog me-2"></i> Plus <i class="fas fa-chevron-down ml-2"></i>
-                                    </button>
-                                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block">
-                                        <div class="py-1">
-                                            <a href="{{ url_for('scan') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 {% if request.endpoint == 'scan' %}bg-blue-50 text-blue-600 font-medium{% endif %}">
-                                                <i class="fas fa-camera me-2"></i> Scanner
-                                            </a>
-                                            <a href="{{ url_for('admin') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 {% if request.endpoint == 'admin' %}bg-blue-50 text-blue-600 font-medium{% endif %}">
-                                                <i class="fas fa-user-shield me-2"></i> Admin
-                                            </a>
-                                            <a href="{{ url_for('credits') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 {% if request.endpoint == 'credits' %}bg-blue-50 text-blue-600 font-medium{% endif %}">
-                                                <i class="fas fa-info-circle me-2"></i> Crédits
-                                            </a>
-                                            <a href="{{ url_for('backup') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 {% if request.endpoint == 'backup' %}bg-blue-50 text-blue-600 font-medium{% endif %}">
-                                                <i class="fas fa-database me-2"></i> Backup
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('dashboard') }}">Tableau de bord</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('employees') }}">Employés</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('general') }}">Centre de Contrôle</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('report') }}">Rapports</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('scan') }}">Scanner</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin') }}">Admin</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('credits') }}">Crédits</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('backup') }}">Backup</a>
+                            </li>
                         {% else %}
-                            <a href="{{ url_for('profile') }}" class="nav-link px-3 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-150 flex items-center {% if request.endpoint == 'profile' %}bg-blue-50 text-blue-600 font-medium{% endif %}">
-                                <i class="fas fa-user me-2"></i> Mon Profil
-                            </a>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('profile') }}">Mon Profil</a>
+                            </li>
                         {% endif %}
-                        <div class="border-l border-gray-200 h-6 mx-4"></div>
-                        <a href="{{ url_for('logout') }}" class="btn flex items-center px-4 py-2 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 hover:border-red-300 transition-all duration-150">
-                            <i class="fas fa-sign-out-alt me-2"></i> Se déconnecter
-                        </a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">Se déconnecter</a>
+                        </li>
                     {% else %}
-                        <a href="{{ url_for('login') }}" class="btn flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-150">
-                            <i class="fas fa-sign-in-alt me-2"></i> Se connecter
-                        </a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Se connecter</a>
+                        </li>
                     {% endif %}
-                </div>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Navigation Menu -->
-    <div class="lg:hidden" id="mobile-menu">
-        <div class="px-2 pt-2 pb-3 space-y-1">
-            {% if current_user.is_authenticated %}
-                {% if current_user.is_admin %}
-                    <a href="{{ url_for('dashboard') }}" class="block px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-150 {% if request.endpoint == 'dashboard' %}text-blue-600 font-medium{% endif %}">
-                        <i class="fas fa-home me-2"></i> Tableau de bord
-                    </a>
-                    <a href="{{ url_for('employees') }}" class="block px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-150 {% if request.endpoint == 'employees' %}text-blue-600 font-medium{% endif %}">
-                        <i class="fas fa-users me-2"></i> Employés
-                    </a>
-                    <a href="{{ url_for('report') }}" class="block px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-150 {% if request.endpoint == 'report' %}text-blue-600 font-medium{% endif %}">
-                        <i class="fas fa-chart-bar me-2"></i> Rapports
-                    </a>
-                    <div class="border-t border-gray-200 my-2"></div>
-                    <a href="{{ url_for('scan') }}" class="block px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-150 {% if request.endpoint == 'scan' %}text-blue-600 font-medium{% endif %}">
-                        <i class="fas fa-camera me-2"></i> Scanner
-                    </a>
-                    <a href="{{ url_for('admin') }}" class="block px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-150 {% if request.endpoint == 'admin' %}text-blue-600 font-medium{% endif %}">
-                        <i class="fas fa-user-shield me-2"></i> Admin
-                    </a>
-                    <a href="{{ url_for('credits') }}" class="block px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-150 {% if request.endpoint == 'credits' %}text-blue-600 font-medium{% endif %}">
-                        <i class="fas fa-info-circle me-2"></i> Crédits
-                    </a>
-                    <a href="{{ url_for('backup') }}" class="block px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-150 {% if request.endpoint == 'backup' %}text-blue-600 font-medium{% endif %}">
-                        <i class="fas fa-database me-2"></i> Backup
-                    </a>
-                {% else %}
-                    <a href="{{ url_for('profile') }}" class="block px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors duration-150 {% if request.endpoint == 'profile' %}text-blue-600 font-medium{% endif %}">
-                        <i class="fas fa-user me-2"></i> Mon Profil
-                    </a>
-                {% endif %}
-                <div class="border-t border-gray-200 my-2"></div>
-                <a href="{{ url_for('logout') }}" class="block px-3 py-2 text-gray-600 hover:text-red-600 transition-colors duration-150">
-                    <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
-                </a>
-            {% else %}
-                <div class="px-3 py-2">
-                    <a href="{{ url_for('login') }}" class="inline-block w-full text-center btn btn-primary btn-sm bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-150 rounded-lg px-4 py-2">
-                        <i class="fas fa-sign-in-alt me-2"></i> Se connecter
-                    </a>
-                </div>
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show">
+                        {% if category == 'success' %}
+                            <i class="fas fa-check-circle me-2"></i>
+                        {% elif category == 'error' %}
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                        {% endif %}
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
             {% endif %}
-        </div>
+        {% endwith %}
     </div>
+
+    <!-- Main Content -->
+    <main class="container mt-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-5 py-3">
+        <div class="container text-center text-muted">
+            <small>&copy; 2024 Système de Gestion de Présence. Tous droits reservés.</small>
+        </div>
+    </footer>
 
     <script>
         // Wait for DOM to be ready
@@ -259,36 +223,5 @@
             });
         });
     </script>
-
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="container">
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {% if category == 'success' %}
-                            <i class="fas fa-check-circle me-2"></i>
-                        {% elif category == 'error' %}
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                        {% endif %}
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
-    <!-- Main Content -->
-    <main class="container">
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer mt-5 py-3">
-        <div class="container text-center text-muted">
-            <small>&copy; 2024 Système de Gestion de Présence. Tous droits reservés.</small>
-        </div>
-    </footer>
 </body>
 </html>
