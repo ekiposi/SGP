@@ -24,22 +24,29 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '0667akk7'  # Change this to a secure secret key
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/attendance.db'
+
+# Set up database path
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance', 'attendance.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join(app.static_folder)
 
 # Ensure instance directory exists with proper permissions
-instance_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance')
-if not os.path.exists(instance_path):
-    os.makedirs(instance_path, mode=0o777)
+instance_path = os.path.dirname(DB_PATH)
+os.makedirs(instance_path, mode=0o777, exist_ok=True)
+
+# Touch the database file to ensure it exists with proper permissions
+if not os.path.exists(DB_PATH):
+    with open(DB_PATH, 'a') as f:
+        pass
+    os.chmod(DB_PATH, 0o666)
 
 # Initialize Flask extensions
 db.init_app(app)
 
 # Create backup directory if it doesn't exist
 BACKUP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'backup')
-if not os.path.exists(BACKUP_DIR):
-    os.makedirs(BACKUP_DIR, mode=0o777)
+os.makedirs(BACKUP_DIR, mode=0o777, exist_ok=True)
 
 # Initialize scheduler
 scheduler = BackgroundScheduler()
@@ -57,7 +64,7 @@ def create_backup_file():
     
     # Create backup by copying the database file
     try:
-        shutil.copy2('instance/database.db', backup_path)
+        shutil.copy2(DB_PATH, backup_path)
         cleanup_old_backups()
         return backup_path
     except Exception as e:
@@ -67,7 +74,7 @@ def create_backup_file():
 def cleanup_old_backups():
     """Remove backups older than retention period"""
     try:
-        with sqlite3.connect('instance/database.db') as conn:
+        with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
             cursor.execute('SELECT value FROM settings WHERE key = "retention_period"')
             result = cursor.fetchone()
@@ -571,7 +578,7 @@ def backup():
     
     # Get backup settings
     try:
-        with sqlite3.connect('instance/database.db') as conn:
+        with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
             cursor.execute('SELECT value FROM settings WHERE key = "backup_frequency"')
             frequency = cursor.fetchone()
@@ -611,7 +618,7 @@ def update_backup_settings():
     retention_period = request.form.get('retention_period', '30')
     
     try:
-        with sqlite3.connect('instance/database.db') as conn:
+        with sqlite3.connect(DB_PATH) as conn:
             cursor = conn.cursor()
             cursor.execute('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)',
                          ('backup_frequency', frequency))

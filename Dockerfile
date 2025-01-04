@@ -35,21 +35,22 @@ RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
 # Create necessary directories with proper permissions
-RUN mkdir -p instance backup static/uploads/face_snapshots && \
-    chmod 777 instance backup static/uploads/face_snapshots
+RUN mkdir -p /app/instance /app/backup /app/static/uploads/face_snapshots && \
+    chmod 777 /app/instance /app/backup /app/static/uploads/face_snapshots
 
 # Copy the rest of the application
 COPY . .
 
 # Set permissions for the application
 RUN chown -R www-data:www-data /app && \
-    chmod -R 755 /app
+    chmod -R 755 /app && \
+    chmod 777 /app/instance
 
 # Switch to non-root user
 USER www-data
 
 # Initialize the database
-RUN python init_db.py || true
+RUN python init_db.py
 
 # Expose port
 EXPOSE 8080
