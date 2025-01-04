@@ -41,6 +41,9 @@ RUN mkdir -p /app/instance /app/backup /app/static/uploads/face_snapshots && \
 # Copy the rest of the application
 COPY . .
 
+# Remove any existing database
+RUN rm -f /app/instance/attendance.db
+
 # Set permissions for the application
 RUN chown -R www-data:www-data /app && \
     chmod -R 755 /app && \
