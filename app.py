@@ -28,13 +28,18 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/attendance.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join(app.static_folder)
 
+# Ensure instance directory exists with proper permissions
+instance_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance')
+if not os.path.exists(instance_path):
+    os.makedirs(instance_path, mode=0o777)
+
 # Initialize Flask extensions
 db.init_app(app)
 
 # Create backup directory if it doesn't exist
 BACKUP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'backup')
 if not os.path.exists(BACKUP_DIR):
-    os.makedirs(BACKUP_DIR)
+    os.makedirs(BACKUP_DIR, mode=0o777)
 
 # Initialize scheduler
 scheduler = BackgroundScheduler()

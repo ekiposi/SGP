@@ -34,11 +34,19 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# Create necessary directories
-RUN mkdir -p instance backup static/uploads/face_snapshots
+# Create necessary directories with proper permissions
+RUN mkdir -p instance backup static/uploads/face_snapshots && \
+    chmod 777 instance backup static/uploads/face_snapshots
 
 # Copy the rest of the application
 COPY . .
+
+# Set permissions for the application
+RUN chown -R www-data:www-data /app && \
+    chmod -R 755 /app
+
+# Switch to non-root user
+USER www-data
 
 # Initialize the database
 RUN python init_db.py || true
