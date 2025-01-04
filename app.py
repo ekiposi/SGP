@@ -915,9 +915,4 @@ def change_password():
     return redirect(url_for('profile'))
 
 if __name__ == '__main__':
-    # Only use debug mode when running locally
-    is_pythonanywhere = os.environ.get('PYTHONANYWHERE_SITE', False)
-    if is_pythonanywhere:
-        app.run()
-    else:
-        app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
