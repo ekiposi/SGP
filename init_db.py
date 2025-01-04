@@ -1,4 +1,5 @@
 from app import app, db, DB_PATH
+from models import User
 import os
 
 # Ensure instance directory exists with proper permissions
@@ -15,6 +16,15 @@ with app.app_context():
     try:
         db.create_all()
         print("Database initialized successfully!")
+        
+        # Create default admin user if it doesn't exist
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            admin = User(username='admin', is_admin=True)
+            admin.set_password('admin123')  # Set a default password
+            db.session.add(admin)
+            db.session.commit()
+            print("Default admin user created")
         
         # Verify database was created
         if os.path.exists(DB_PATH):
