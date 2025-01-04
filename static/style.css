@@ -1,0 +1,73 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Scanner Styles */
+#reader {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#facialRecognition {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+#faceVideo {
+    width: 100%;
+    border-radius: 6px;
+}
+
+/* Alert Styles */
+.alert {
+    padding: 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Title Styles */
+.card-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    #reader, #facialRecognition {
+        min-height: 300px;
+    }
+}
